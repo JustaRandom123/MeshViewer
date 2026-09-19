@@ -58,7 +58,7 @@ namespace BFP4FMeshViewer
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog
             {
-                Description = "Ordner mit .bundledmesh-Dateien und Texturen waehlen",
+                Description = "Select folder with .bundledmesh files and textures",
                 ShowNewFolderButton = false
             };
             if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
@@ -87,15 +87,15 @@ namespace BFP4FMeshViewer
 
                 TxtFolder.Text = folder;
                 TxtFolder.ToolTip = folder;
-                TxtStatus.Text = string.Format("{0} Meshes, {1} Texturdateien gefunden.",
+                TxtStatus.Text = string.Format("{0} Meshes, {1} Texture files found.",
                     _allMeshes.Count, _textures.FileCount);
 
                 if (_allMeshes.Count == 0)
-                    TxtStatus.Text += " Keine .bundledmesh-Datei im Ordner.";
+                    TxtStatus.Text += " No .bundledmesh files in the folder.";
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Ordner konnte nicht gelesen werden",
+                MessageBox.Show(this, ex.Message, "Folder could not be read",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             finally
@@ -183,15 +183,15 @@ namespace BFP4FMeshViewer
                 if (frameCamera) FrameBounds(built.Bounds);
 
                 var head = _current.Header;
-                TxtInfo.Text = string.Format("{0}  ·  v{1}  ·  {2} Tris  ·  {3} Materialien",
+                TxtInfo.Text = string.Format("{0}  ·  v{1}  ·  {2} Tris  ·  {3} Materials",
                     Path.GetFileName(_current.SourcePath), head.Version,
                     built.TriangleCount, _current.GeomMaterials[lod].Materials.Count);
 
                 var notes = built.Notes.Distinct().Take(4);
                 string note = string.Join(", ", notes);
-                TxtStatus.Text = string.IsNullOrEmpty(note) ? "" : "Texturen: " + note;
+                TxtStatus.Text = string.IsNullOrEmpty(note) ? "" : "Textures: " + note;
                 if (_current.TrailingBytes != 0)
-                    TxtStatus.Text += string.Format("  (Achtung: {0} Bytes am Dateiende nicht geparst)",
+                    TxtStatus.Text += string.Format("  (Warning: {0} bytes at end of file not parsed)",
                         _current.TrailingBytes);
             }
             catch (Exception ex)
@@ -213,7 +213,7 @@ namespace BFP4FMeshViewer
         {
             if (_builtModel == null || _current == null)
             {
-                TxtStatus.Text = "Kein Modell geladen.";
+                TxtStatus.Text = "No model loaded.";
                 return;
             }
 
@@ -221,7 +221,7 @@ namespace BFP4FMeshViewer
             if (!int.TryParse(TxtShotW.Text, out w) || w < 1 || w > 8192 ||
                 !int.TryParse(TxtShotH.Text, out h) || h < 1 || h > 8192)
             {
-                TxtStatus.Text = "Bildgroesse ungueltig (1 bis 8192).";
+                TxtStatus.Text = "Invalid image size (1 to 8192).";
                 return;
             }
 
@@ -241,11 +241,11 @@ namespace BFP4FMeshViewer
                     Path.GetFileNameWithoutExtension(_current.SourcePath) + ".png");
 
                 Snapshot.SavePng(img, file);
-                TxtStatus.Text = string.Format("Gespeichert: {0} ({1}x{2})", file, w, h);
+                TxtStatus.Text = string.Format("Saved: {0} ({1}x{2})", file, w, h);
             }
             catch (Exception ex)
             {
-                TxtStatus.Text = "Screenshot fehlgeschlagen: " + ex.Message;
+                TxtStatus.Text = "Failed to take screenshot: " + ex.Message;
             }
             finally
             {

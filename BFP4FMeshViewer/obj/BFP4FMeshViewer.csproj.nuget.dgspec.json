@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj": {}
+    "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj": {
+    "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj",
+        "projectUniqueName": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj",
         "projectName": "BFP4FMeshViewer",
-        "projectPath": "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj",
+        "projectPath": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\BFP4FMeshViewer.csproj",
         "packagesPath": "E:\\NuGetPackages",
-        "outputPath": "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\obj\\",
+        "outputPath": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "E:\\Visual Studio Shared\\NuGetPackages"

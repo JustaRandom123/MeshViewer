@@ -1,13 +1,21 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\jonas\\Desktop\\MeshViewer\\",
+  "WorkspaceRootPath": "F:\\Documents\\GitHub\\MeshViewer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|c:\\users\\jonas\\desktop\\meshviewer\\bfp4fmeshviewer\\bf2\\snapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|f:\\documents\\github\\meshviewer\\bfp4fmeshviewer\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|solutionrelative:bfp4fmeshviewer\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|f:\\documents\\github\\meshviewer\\bfp4fmeshviewer\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|solutionrelative:bfp4fmeshviewer\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|f:\\documents\\github\\meshviewer\\bfp4fmeshviewer\\bf2\\snapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|solutionrelative:bfp4fmeshviewer\\bf2\\snapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|c:\\users\\jonas\\desktop\\meshviewer\\bfp4fmeshviewer\\bf2\\ddsimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|f:\\documents\\github\\meshviewer\\bfp4fmeshviewer\\bf2\\ddsimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76B8120A-825D-5BED-BB60-20F962E48597}|BFP4FMeshViewer\\BFP4FMeshViewer.csproj|solutionrelative:bfp4fmeshviewer\\bf2\\ddsimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -18,28 +26,53 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "BFP4FMeshViewer\\MainWindow.xaml.cs",
+              "ToolTip": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\MainWindow.xaml.cs",
+              "RelativeToolTip": "BFP4FMeshViewer\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAF8BAAAAAAAAAAAawPUAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-19T14:53:48.472Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "BFP4FMeshViewer\\MainWindow.xaml",
+              "ToolTip": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\MainWindow.xaml*",
+              "RelativeToolTip": "BFP4FMeshViewer\\MainWindow.xaml*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-09-19T14:51:28.08Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Snapshot.cs",
-              "DocumentMoniker": "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\Bf2\\Snapshot.cs",
+              "DocumentMoniker": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\Bf2\\Snapshot.cs",
               "RelativeDocumentMoniker": "BFP4FMeshViewer\\Bf2\\Snapshot.cs",
-              "ToolTip": "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\Bf2\\Snapshot.cs",
+              "ToolTip": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\Bf2\\Snapshot.cs",
               "RelativeToolTip": "BFP4FMeshViewer\\Bf2\\Snapshot.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAiwCIAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-19T12:19:28.164Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "DdsImage.cs",
-              "DocumentMoniker": "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\Bf2\\DdsImage.cs",
+              "DocumentMoniker": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\Bf2\\DdsImage.cs",
               "RelativeDocumentMoniker": "BFP4FMeshViewer\\Bf2\\DdsImage.cs",
-              "ToolTip": "C:\\Users\\jonas\\Desktop\\MeshViewer\\BFP4FMeshViewer\\Bf2\\DdsImage.cs",
+              "ToolTip": "F:\\Documents\\GitHub\\MeshViewer\\BFP4FMeshViewer\\Bf2\\DdsImage.cs",
               "RelativeToolTip": "BFP4FMeshViewer\\Bf2\\DdsImage.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

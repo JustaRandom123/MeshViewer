@@ -45,8 +45,8 @@
                 <StackPanel DockPanel.Dock="Top">
                     <TextBlock Text="BFP4F MESH VIEWER" FontSize="13" FontWeight="SemiBold"
                                Foreground="#E8E8EA" Margin="0,0,0,10"/>
-                    <Button x:Name="BtnFolder" Content="Ordner laden…" Click="BtnFolder_Click"/>
-                    <TextBlock x:Name="TxtFolder" Text="Kein Ordner geladen" Margin="0,6,0,10"
+                    <Button x:Name="BtnFolder" Content="Load Folder…" Click="BtnFolder_Click"/>
+                    <TextBlock x:Name="TxtFolder" Text="No folder loaded" Margin="0,6,0,10"
                                FontSize="11" Foreground="#8A8F99" TextTrimming="CharacterEllipsis"/>
                     <TextBox x:Name="TxtFilter" Margin="0,0,0,8" Padding="4,3"
                              Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
@@ -80,15 +80,15 @@
                             <ComboBoxItem Content="3"/>
                         </ComboBox>
                     </Grid>
-                    <CheckBox x:Name="ChkOpaque" Content="Alpha immer ignorieren" IsChecked="False"
+                    <CheckBox x:Name="ChkOpaque" Content="Alpha always ignore" IsChecked="False"
                               Foreground="#C8CBD0" FontSize="12" Margin="0,0,0,8"
                               Checked="ChkOpaque_Changed" Unchecked="ChkOpaque_Changed"
-                              ToolTip="BF2 legt Specular im Alphakanal ab. Anhaken, wenn ein Material trotz alphaMode durchsichtig bleibt."/>
+                              ToolTip="BF2 places Specular in the alpha channel. Check if a material remains transparent despite alphaMode."/>
 
                     <Border BorderBrush="#3A3F47" BorderThickness="0,1,0,0" Padding="0,8,0,0" Margin="0,0,0,8">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="Bild" FontSize="12" Foreground="#C8CBD0"
+                                <TextBlock Text="Picture" FontSize="12" Foreground="#C8CBD0"
                                            VerticalAlignment="Center" Margin="0,0,8,0"/>
                                 <TextBox x:Name="TxtShotW" Text="400" Width="42" Padding="3,2"
                                          Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
@@ -101,15 +101,15 @@
                                 <TextBlock Text="px" FontSize="11" Foreground="#8A8F99"
                                            VerticalAlignment="Center" Margin="6,0,0,0"/>
                             </StackPanel>
-                            <CheckBox x:Name="ChkAutoFit" Content="Auto-Fit (sonst aktueller Zoom)"
+                            <CheckBox x:Name="ChkAutoFit" Content="Auto-Fit (otherwise current zoom)"
                                       IsChecked="True" Foreground="#C8CBD0" FontSize="12" Margin="0,0,0,6"
-                                      ToolTip="Passt das Modell formatfuellend ein. Aus: uebernimmt den Zoom aus der Ansicht."/>
-                            <Button x:Name="BtnShot" Content="Screenshot speichern  (Strg+S)"
+                                      ToolTip="Fits the model formatively. Off: takes the zoom from the view."/>
+                            <Button x:Name="BtnShot" Content="Save Screenshot  (Ctrl+S)"
                                     Click="BtnShot_Click"/>
                         </StackPanel>
                     </Border>
                     <TextBlock x:Name="TxtStatus" FontSize="11" Foreground="#8A8F99" TextWrapping="Wrap"
-                               Text="Tab blendet das Panel aus · F rahmt das Modell · F11 Vollbild"/>
+                               Text="Tab hides the panel · F frames the model · F11 fullscreen"/>
                 </StackPanel>
 
                 <ListBox x:Name="LstMeshes" Margin="0,0,0,4"
