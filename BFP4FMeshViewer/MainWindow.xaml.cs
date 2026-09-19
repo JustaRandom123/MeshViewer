@@ -35,6 +35,7 @@ namespace BFP4FMeshViewer
 
         private System.Windows.Point _lastMouse;
         private bool _orbiting, _panning;
+        private bool _syncingCamFields;
         private WindowState _preFullscreenState;
         private WindowStyle _preFullscreenStyle;
 
@@ -42,6 +43,7 @@ namespace BFP4FMeshViewer
         {
             InitializeComponent();
             UpdateCamera();
+            SyncCamFields();
 
             RenderHost.MouseLeftButtonDown += Viewport_MouseLeftDown;
             RenderHost.MouseLeftButtonUp += Viewport_MouseUp;
@@ -225,6 +227,12 @@ namespace BFP4FMeshViewer
                 return;
             }
 
+            double marginPct;
+            if (!double.TryParse(TxtMargin.Text, System.Globalization.NumberStyles.Float,
+                                 System.Globalization.CultureInfo.InvariantCulture, out marginPct))
+                double.TryParse(TxtMargin.Text, out marginPct);
+            if (marginPct < 0 || marginPct > 200) marginPct = 4;
+
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
@@ -233,7 +241,10 @@ namespace BFP4FMeshViewer
                     _builtModel, _builtBounds,
                     _yaw, _pitch, _target, _distance,
                     w, h, Camera.FieldOfView,
-                    ChkAutoFit.IsChecked == true, 0.04, 8);
+                    ChkAutoFit.IsChecked == true, marginPct / 100.0, 8);
+
+                if (ChkShadow.IsChecked == true)
+                    img = Snapshot.ApplyDropShadow(img);
 
                 string dir = Path.Combine(_rootFolder ?? Path.GetDirectoryName(_current.SourcePath),
                                           "screenshots");
@@ -264,6 +275,50 @@ namespace BFP4FMeshViewer
             double fov = Camera.FieldOfView * Math.PI / 180.0;
             _distance = _modelRadius / Math.Sin(fov / 2) * 1.25;
             UpdateCamera();
+        }
+
+        /// <summary>Degree fields -> camera. Inactive while the fields are being updated themselves.</summary>
+        private void CamField_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded || _syncingCamFields) return;
+
+            double yawDeg, pitchDeg;
+            if (!TryParseAngle(TxtYaw.Text, out yawDeg)) return;
+            if (!TryParseAngle(TxtPitch.Text, out pitchDeg)) return;
+
+            _yaw = yawDeg * Math.PI / 180.0;
+            _pitch = Clamp(pitchDeg, -89, 89) * Math.PI / 180.0;
+            UpdateCamera();
+        }
+
+        private static bool TryParseAngle(string s, out double value)
+        {
+            if (double.TryParse(s, System.Globalization.NumberStyles.Float,
+                                System.Globalization.CultureInfo.InvariantCulture, out value))
+                return true;
+            return double.TryParse(s, out value);   // also accepts a comma as decimal separator
+        }
+
+        /// <summary>Camera -> degree fields, after dragging with the mouse.</summary>
+        private void SyncCamFields()
+        {
+            if (TxtYaw == null || TxtPitch == null) return;
+            _syncingCamFields = true;
+            try
+            {
+                var ci = System.Globalization.CultureInfo.InvariantCulture;
+                TxtYaw.Text = NormalizeDeg(_yaw * 180.0 / Math.PI).ToString("0.#", ci);
+                TxtPitch.Text = (_pitch * 180.0 / Math.PI).ToString("0.#", ci);
+            }
+            finally { _syncingCamFields = false; }
+        }
+
+        private static double NormalizeDeg(double d)
+        {
+            d %= 360.0;
+            if (d > 180.0) d -= 360.0;
+            if (d < -180.0) d += 360.0;
+            return d;
         }
 
         private void UpdateCamera()
@@ -308,6 +363,7 @@ namespace BFP4FMeshViewer
             {
                 _yaw += dx * 0.01;
                 _pitch = Clamp(_pitch + dy * 0.01, -1.53, 1.53);
+                SyncCamFields();
             }
             else
             {

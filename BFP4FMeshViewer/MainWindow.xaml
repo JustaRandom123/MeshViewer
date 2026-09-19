@@ -101,9 +101,40 @@
                                 <TextBlock Text="px" FontSize="11" Foreground="#8A8F99"
                                            VerticalAlignment="Center" Margin="6,0,0,0"/>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="Angle" FontSize="12" Foreground="#C8CBD0"
+                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBox x:Name="TxtYaw" Width="46" Padding="3,2"
+                                         Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
+                                         CaretBrush="#E8E8EA" TextAlignment="Center"
+                                         TextChanged="CamField_TextChanged"
+                                         ToolTip="Rotation around the vertical axis, in degrees."/>
+                                <TextBlock Text="/" FontSize="12" Foreground="#8A8F99"
+                                           VerticalAlignment="Center" Margin="5,0"/>
+                                <TextBox x:Name="TxtPitch" Width="46" Padding="3,2"
+                                         Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
+                                         CaretBrush="#E8E8EA" TextAlignment="Center"
+                                         TextChanged="CamField_TextChanged"
+                                         ToolTip="Tilt in degrees. Positive looks down from above. The original icons sit at about 5."/>
+                                <TextBlock Text="°" FontSize="12" Foreground="#8A8F99"
+                                           VerticalAlignment="Center" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="Margin" FontSize="12" Foreground="#C8CBD0"
+                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBox x:Name="TxtMargin" Text="4" Width="46" Padding="3,2"
+                                         Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
+                                         CaretBrush="#E8E8EA" TextAlignment="Center"
+                                         ToolTip="Space around the model, in percent. The original 4327.png corresponds to about 10."/>
+                                <TextBlock Text="%" FontSize="12" Foreground="#8A8F99"
+                                           VerticalAlignment="Center" Margin="4,0,0,0"/>
+                            </StackPanel>
                             <CheckBox x:Name="ChkAutoFit" Content="Auto-Fit (otherwise current zoom)"
                                       IsChecked="True" Foreground="#C8CBD0" FontSize="12" Margin="0,0,0,6"
                                       ToolTip="Fits the model formatively. Off: takes the zoom from the view."/>
+                            <CheckBox x:Name="ChkShadow" Content="Drop shadow" IsChecked="True"
+                                      Foreground="#C8CBD0" FontSize="12" Margin="0,0,0,6"
+                                      ToolTip="Adds the soft shadow the original icons carry. Fitted against 4327.png."/>
                             <Button x:Name="BtnShot" Content="Save Screenshot  (Ctrl+S)"
                                     Click="BtnShot_Click"/>
                         </StackPanel>
