@@ -1,0 +1,15 @@
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\bin\Debug\net472\BFP4FMeshViewer.exe.config
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\bin\Debug\net472\BFP4FMeshViewer.exe
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\bin\Debug\net472\BFP4FMeshViewer.pdb
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.csproj.AssemblyReference.cache
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\MainWindow.baml
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\MainWindow.g.cs
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\App.g.cs
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer_MarkupCompile.cache
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.g.resources
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.AssemblyInfoInputs.cache
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.AssemblyInfo.cs
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.csproj.CoreCompileInputs.cache
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.exe
+C:\Users\jonas\Desktop\MeshViewer\BFP4FMeshViewer\obj\Debug\net472\BFP4FMeshViewer.pdb

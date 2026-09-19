@@ -1,0 +1,136 @@
+﻿<Window x:Class="BFP4FMeshViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="BFP4F Mesh Viewer" Height="800" Width="1280"
+        Background="#1B1D21" WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True" FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#33373E"/>
+            <Setter Property="Foreground" Value="#E8E8EA"/>
+            <Setter Property="BorderBrush" Value="#4A4F58"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Eigener Hintergrund, sonst ist die Flaeche neben dem Modell nicht maus-treffbar -->
+        <Grid x:Name="RenderHost" Background="#1B1D21">
+            <Viewport3D x:Name="Viewport" ClipToBounds="True" IsHitTestVisible="False">
+                <Viewport3D.Camera>
+                    <PerspectiveCamera x:Name="Camera" FieldOfView="45"
+                                       Position="0,0,5" LookDirection="0,0,-1" UpDirection="0,1,0"/>
+                </Viewport3D.Camera>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <Model3DGroup>
+                            <AmbientLight Color="#6A6A70"/>
+                            <DirectionalLight Color="#FFFFFF" Direction="-0.4,-0.6,-0.7"/>
+                            <DirectionalLight Color="#8A8F99" Direction="0.7,-0.2,0.5"/>
+                            <DirectionalLight Color="#55585F" Direction="0.1,0.9,0.2"/>
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+                <ModelVisual3D x:Name="ModelHost"/>
+            </Viewport3D>
+        </Grid>
+
+        <!-- Overlay-Panel, mit Tab ausblendbar -->
+        <Border x:Name="SidePanel" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                Width="290" Background="#D9202329" BorderBrush="#3A3F47" BorderThickness="0,0,1,0">
+            <DockPanel Margin="12">
+                <StackPanel DockPanel.Dock="Top">
+                    <TextBlock Text="BFP4F MESH VIEWER" FontSize="13" FontWeight="SemiBold"
+                               Foreground="#E8E8EA" Margin="0,0,0,10"/>
+                    <Button x:Name="BtnFolder" Content="Ordner laden…" Click="BtnFolder_Click"/>
+                    <TextBlock x:Name="TxtFolder" Text="Kein Ordner geladen" Margin="0,6,0,10"
+                               FontSize="11" Foreground="#8A8F99" TextTrimming="CharacterEllipsis"/>
+                    <TextBox x:Name="TxtFilter" Margin="0,0,0,8" Padding="4,3"
+                             Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
+                             CaretBrush="#E8E8EA" TextChanged="TxtFilter_TextChanged"
+                             ToolTip="Liste filtern"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom">
+                    <Grid Margin="0,8,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="LOD" FontSize="12" Foreground="#C8CBD0"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox x:Name="CmbLod" Grid.Column="1"
+                                  SelectionChanged="CmbLod_SelectionChanged"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Textur-Slot" FontSize="12" Foreground="#C8CBD0"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox x:Name="CmbSlot" Grid.Column="1" SelectedIndex="0"
+                                  SelectionChanged="CmbSlot_SelectionChanged">
+                            <ComboBoxItem Content="0"/>
+                            <ComboBoxItem Content="1"/>
+                            <ComboBoxItem Content="2"/>
+                            <ComboBoxItem Content="3"/>
+                        </ComboBox>
+                    </Grid>
+                    <CheckBox x:Name="ChkOpaque" Content="Alpha immer ignorieren" IsChecked="False"
+                              Foreground="#C8CBD0" FontSize="12" Margin="0,0,0,8"
+                              Checked="ChkOpaque_Changed" Unchecked="ChkOpaque_Changed"
+                              ToolTip="BF2 legt Specular im Alphakanal ab. Anhaken, wenn ein Material trotz alphaMode durchsichtig bleibt."/>
+
+                    <Border BorderBrush="#3A3F47" BorderThickness="0,1,0,0" Padding="0,8,0,0" Margin="0,0,0,8">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="Bild" FontSize="12" Foreground="#C8CBD0"
+                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBox x:Name="TxtShotW" Text="400" Width="42" Padding="3,2"
+                                         Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
+                                         CaretBrush="#E8E8EA" TextAlignment="Center"/>
+                                <TextBlock Text="×" FontSize="12" Foreground="#8A8F99"
+                                           VerticalAlignment="Center" Margin="6,0"/>
+                                <TextBox x:Name="TxtShotH" Text="180" Width="42" Padding="3,2"
+                                         Background="#2A2E35" Foreground="#E8E8EA" BorderBrush="#4A4F58"
+                                         CaretBrush="#E8E8EA" TextAlignment="Center"/>
+                                <TextBlock Text="px" FontSize="11" Foreground="#8A8F99"
+                                           VerticalAlignment="Center" Margin="6,0,0,0"/>
+                            </StackPanel>
+                            <CheckBox x:Name="ChkAutoFit" Content="Auto-Fit (sonst aktueller Zoom)"
+                                      IsChecked="True" Foreground="#C8CBD0" FontSize="12" Margin="0,0,0,6"
+                                      ToolTip="Passt das Modell formatfuellend ein. Aus: uebernimmt den Zoom aus der Ansicht."/>
+                            <Button x:Name="BtnShot" Content="Screenshot speichern  (Strg+S)"
+                                    Click="BtnShot_Click"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock x:Name="TxtStatus" FontSize="11" Foreground="#8A8F99" TextWrapping="Wrap"
+                               Text="Tab blendet das Panel aus · F rahmt das Modell · F11 Vollbild"/>
+                </StackPanel>
+
+                <ListBox x:Name="LstMeshes" Margin="0,0,0,4"
+                         Background="#2A2E35" BorderBrush="#3A3F47"
+                         SelectionChanged="LstMeshes_SelectionChanged"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#D6D9DE"
+                                       TextTrimming="CharacterEllipsis" Padding="2,3"
+                                       ToolTip="{Binding FullPath}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- Kopfzeile im Renderbereich -->
+        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,14,0"
+                Background="#99202329" CornerRadius="3" Padding="10,6" IsHitTestVisible="False">
+            <TextBlock x:Name="TxtInfo" Text="" FontSize="12" Foreground="#A9AEB6"/>
+        </Border>
+    </Grid>
+</Window>

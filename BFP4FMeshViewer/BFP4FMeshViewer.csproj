@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Laeuft mit der vorhandenen Visual-Studio-Installation ohne Zusatzdownload.
+         Fuer .NET 8 stattdessen: <TargetFramework>net8.0-windows</TargetFramework> -->
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>BFP4FMeshViewer</RootNamespace>
+    <AssemblyName>BFP4FMeshViewer</AssemblyName>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+</Project>
