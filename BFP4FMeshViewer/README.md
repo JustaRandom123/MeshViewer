@@ -1,6 +1,6 @@
 # BFP4F Mesh Viewer
 
-Minimalistischer Betrachter für Refractor-2 `.bundledmesh`-Dateien (BF2 / BFP4F)
+Minimalistischer Betrachter für Refractor-2 `.bundledmesh`- und `.staticmesh`-Dateien (BF2 / BFP4F)
 mit Texturdarstellung. Ordner laden, Item anklicken, fertig.
 
 ## Bauen
@@ -26,7 +26,7 @@ der eigene Decoder in `Bf2/DdsImage.cs`.
 
 | Eingabe | Wirkung |
 |---|---|
-| **Ordner laden…** | durchsucht den Ordner rekursiv nach `.bundledmesh` und Texturen |
+| **Ordner laden…** | durchsucht den Ordner rekursiv nach `.bundledmesh`, `.staticmesh` und Texturen |
 | Klick auf Listeneintrag | lädt und rendert das Mesh |
 | Linke Maustaste ziehen | Orbit |
 | Rechte Maustaste ziehen | Verschieben |
@@ -85,7 +85,7 @@ Icon-Pipeline ist, lässt sich aus einem einzelnen Beispiel nicht ableiten.
 
 | Datei | Inhalt |
 |---|---|
-| `Bf2/BundledMesh.cs` | Parser für das Dateiformat |
+| `Bf2/Bf2Mesh.cs` | Parser für das Dateiformat (Bundled + Static) |
 | `Bf2/DdsImage.cs` | DDS-Decoder: BC1/DXT1, BC2/DXT3, BC3/DXT5, unkomprimiert |
 | `Bf2/MeshBuilder.cs` | baut `Model3DGroup`, löst Texturpfade im Ordner auf |
 | `Bf2/Snapshot.cs` | Offscreen-Rendering in feste Bildgröße, PNG-Export |
@@ -104,18 +104,25 @@ Geometry    u32 geomCount
             u32 vertexFormat, u32 vertexStride, u32 vertexCount
             float  x (vertexCount * vertexStride / vertexFormat)
             u32 indexCount, u16 x indexCount
-u32         (BundledMesh-spezifisch)
+u32         (unbekannt)
 Lods        x Summe aller lodCount
-            v6:  vec3 min, vec3 max, vec3 pivot, u32 nodeCount
+  bundled   v6:  vec3 min, vec3 max, vec3 pivot, u32 nodeCount
             v10: vec3 min, vec3 max, u32 nodeCount,
                  bei header.u5==1: {4x4 float Matrix, String} x nodeCount
+  static    vec3 min, vec3 max, (nur v4: vec3 pivot), u32 nodeCount,
+            4x4 float Matrix x nodeCount
 Materials   x Summe aller lodCount
             u32 materialCount
             { u32 alphaMode, String shader, String technique,
               u32 mapCount, String x mapCount,
               u32 vertexStart, u32 indexStart, u32 indexCount, u32 vertexCount,
-              u32 u1, u16 u2, u16 u3 }
+              u32 u1, u16 u2, u16 u3,
+              nur static v11: vec3 min, vec3 max }
 ```
+
+Der Mesh-Typ kommt aus der Dateiendung. Bei StaticMeshes bestimmt der
+Textur-Slot auch den UV-Satz (Slot 0 Base → UV1, 1 Detail → UV2, 2 Dirt → UV3,
+3 Crack → UV4, wie bei `BaseDetailDirtCrack`); BundledMeshes nutzen immer UV1.
 
 `String` = `u32` Länge + ASCII ohne Nullterminator.
 
@@ -133,9 +140,9 @@ durchgängig konsistent ist.
 
 ## Grenzen
 
-- Nur `.bundledmesh`. `.staticmesh` und `.skinnedmesh` haben abweichende
-  LOD- und Materialblöcke.
-- Nur Mesh-Version 6 und 10, wie im Explorer. Andere Versionen brechen mit
+- Nur `.bundledmesh` und `.staticmesh`. `.skinnedmesh` hat abweichende
+  LOD- (Rig-) und Materialblöcke.
+- BundledMesh nur Version 6 und 10, wie im Explorer. Andere Versionen brechen mit
   einer klaren Meldung ab statt stillschweigend Müll zu lesen.
 - Loose Dateien im Ordner, keine `.zip`-Archive.
 - Nur die Diffuse-Map, keine Normal Maps und keine Shader.

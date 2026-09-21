@@ -5,12 +5,18 @@ using System.Text;
 
 namespace BFP4FMeshViewer.Bf2
 {
+    public enum MeshKind { Bundled, Static }
+
     /// <summary>
-    /// Parser fuer Refractor-2 .bundledmesh (BF2 / BFP4F).
+    /// Parser fuer Refractor-2 .bundledmesh und .staticmesh (BF2 / BFP4F).
     /// Reihenfolge und Feldbreiten entsprechen dem BFP4F Explorer von Warranty Voider.
+    /// Beide Formate teilen Header und Geometrie; sie unterscheiden sich nur in
+    /// den LOD-Tabellen (StaticMesh: Node-Matrizen) und den Materialien
+    /// (StaticMesh v11: zusaetzliche Bounding-Box).
     /// </summary>
-    public sealed class BundledMesh
+    public sealed class Bf2Mesh
     {
+        public MeshKind Kind { get; private set; }
         public MeshHeader Header { get; private set; }
         public MeshGeometry Geometry { get; private set; }
         public uint UnknownAfterGeometry { get; private set; }
@@ -19,17 +25,33 @@ namespace BFP4FMeshViewer.Bf2
 
         public string SourcePath { get; private set; }
 
-        public static BundledMesh Load(string path)
+        public static readonly string[] Extensions = { ".bundledmesh", ".staticmesh" };
+
+        public static bool IsSupportedFile(string path)
+        {
+            string ext = Path.GetExtension(path);
+            foreach (var e in Extensions)
+                if (string.Equals(ext, e, StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
+        }
+
+        public static MeshKind KindFromPath(string path)
+        {
+            return string.Equals(Path.GetExtension(path), ".staticmesh", StringComparison.OrdinalIgnoreCase)
+                ? MeshKind.Static : MeshKind.Bundled;
+        }
+
+        public static Bf2Mesh Load(string path)
         {
             var bytes = File.ReadAllBytes(path);
-            var mesh = Parse(bytes);
+            var mesh = Parse(bytes, KindFromPath(path));
             mesh.SourcePath = path;
             return mesh;
         }
 
-        public static BundledMesh Parse(byte[] data)
+        public static Bf2Mesh Parse(byte[] data, MeshKind kind)
         {
-            var mesh = new BundledMesh();
+            var mesh = new Bf2Mesh { Kind = kind };
             using (var ms = new MemoryStream(data, false))
             {
                 mesh.Header = new MeshHeader(ms);
@@ -40,11 +62,11 @@ namespace BFP4FMeshViewer.Bf2
 
                 mesh.Lods = new List<Lod>(lodCount);
                 for (int i = 0; i < lodCount; i++)
-                    mesh.Lods.Add(new Lod(ms, mesh.Header));
+                    mesh.Lods.Add(new Lod(ms, mesh.Header, kind));
 
                 mesh.GeomMaterials = new List<GeometryMaterial>(lodCount);
                 for (int i = 0; i < lodCount; i++)
-                    mesh.GeomMaterials.Add(new GeometryMaterial(ms));
+                    mesh.GeomMaterials.Add(new GeometryMaterial(ms, mesh.Header, kind));
 
                 mesh.TrailingBytes = data.Length - (int)ms.Position;
             }
@@ -60,16 +82,19 @@ namespace BFP4FMeshViewer.Bf2
             int flat = 0;
             for (int g = 0; g < Geometry.LodsPerGeom.Count; g++)
                 for (int l = 0; l < Geometry.LodsPerGeom[g]; l++)
-                    yield return new LodRef(g, l, flat++);
+                    yield return new LodRef(g, l, flat++, Kind);
         }
 
         public struct LodRef
         {
             public readonly int Geom, Lod, FlatIndex;
-            public LodRef(int g, int l, int f) { Geom = g; Lod = l; FlatIndex = f; }
+            public readonly MeshKind Kind;
+            public LodRef(int g, int l, int f, MeshKind kind) { Geom = g; Lod = l; FlatIndex = f; Kind = kind; }
             public override string ToString()
             {
-                string hint = Geom == 0 ? " (1P)" : Geom == 1 ? " (3P)" : Geom == 2 ? " (Wrack)" : "";
+                string hint = "";
+                if (Kind == MeshKind.Bundled)
+                    hint = Geom == 0 ? " (1P)" : Geom == 1 ? " (3P)" : Geom == 2 ? " (Wrack)" : "";
                 return string.Format("Geom{0} Lod{1}{2}", Geom, Lod, hint);
             }
         }
@@ -187,8 +212,34 @@ namespace BFP4FMeshViewer.Bf2
             public float[] Min, Max, Pivot;
             public uint NodeCount;
             public List<string> BoneNames = new List<string>();
+            /// <summary>Nur StaticMesh: eine 4x4-Matrix (16 floats) pro Node.</summary>
+            public List<float[]> NodeMatrices = new List<float[]>();
 
-            public Lod(Stream s, MeshHeader header)
+            public Lod(Stream s, MeshHeader header, MeshKind kind)
+            {
+                if (kind == MeshKind.Static)
+                    ReadStatic(s, header);
+                else
+                    ReadBundled(s, header);
+            }
+
+            private void ReadStatic(Stream s, MeshHeader header)
+            {
+                Min = R.Vec3(s); Max = R.Vec3(s);
+                if (header.Version == 4)
+                    Pivot = R.Vec3(s);
+                NodeCount = R.U32(s);
+                if (NodeCount > 4096)
+                    throw new InvalidDataException("Unplausible Node-Anzahl: " + NodeCount);
+                for (int i = 0; i < NodeCount; i++)
+                {
+                    var m = new float[16];
+                    for (int k = 0; k < 16; k++) m[k] = R.F32(s);
+                    NodeMatrices.Add(m);
+                }
+            }
+
+            private void ReadBundled(Stream s, MeshHeader header)
             {
                 if (header.Version == 6)
                 {
@@ -220,12 +271,14 @@ namespace BFP4FMeshViewer.Bf2
         {
             public List<Material> Materials;
 
-            public GeometryMaterial(Stream s)
+            public GeometryMaterial(Stream s, MeshHeader header, MeshKind kind)
             {
                 uint n = R.U32(s);
+                if (n > 4096)
+                    throw new InvalidDataException("Unplausible Materialanzahl: " + n);
                 Materials = new List<Material>((int)n);
                 for (int i = 0; i < n; i++)
-                    Materials.Add(new Material(s));
+                    Materials.Add(new Material(s, header, kind));
             }
         }
 
@@ -241,8 +294,10 @@ namespace BFP4FMeshViewer.Bf2
             public uint VertexCount;
             public uint U1;
             public ushort U2, U3;
+            /// <summary>Nur StaticMesh v11: Bounding-Box des Materials, sonst null.</summary>
+            public float[] Min, Max;
 
-            public Material(Stream s)
+            public Material(Stream s, MeshHeader header, MeshKind kind)
             {
                 AlphaMode = R.U32(s);
                 ShaderFile = R.CString(s);
@@ -258,6 +313,11 @@ namespace BFP4FMeshViewer.Bf2
                 U1 = R.U32(s);
                 U2 = R.U16(s);
                 U3 = R.U16(s);
+                if (kind == MeshKind.Static && header.Version == 11)
+                {
+                    Min = R.Vec3(s);
+                    Max = R.Vec3(s);
+                }
             }
 
             public override string ToString()

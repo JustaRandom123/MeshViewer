@@ -26,7 +26,7 @@ namespace BFP4FMeshViewer
         private Model3DGroup _builtModel;
         private Rect3D _builtBounds;
         private List<MeshEntry> _allMeshes = new List<MeshEntry>();
-        private BundledMesh _current;
+        private Bf2Mesh _current;
 
         // Orbit-Kamera
         private double _yaw = 0.7, _pitch = 0.35, _distance = 3;
@@ -60,7 +60,7 @@ namespace BFP4FMeshViewer
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog
             {
-                Description = "Select folder with .bundledmesh files and textures",
+                Description = "Select folder with .bundledmesh / .staticmesh files and textures",
                 ShowNewFolderButton = false
             };
             if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
@@ -76,7 +76,8 @@ namespace BFP4FMeshViewer
                 _rootFolder = folder;
                 _textures = new TextureLibrary(folder);
 
-                var files = Directory.GetFiles(folder, "*.bundledmesh", SearchOption.AllDirectories)
+                var files = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories)
+                                     .Where(Bf2Mesh.IsSupportedFile)
                                      .OrderBy(f => f, StringComparer.OrdinalIgnoreCase);
 
                 _allMeshes = files.Select(f => new MeshEntry
@@ -93,7 +94,7 @@ namespace BFP4FMeshViewer
                     _allMeshes.Count, _textures.FileCount);
 
                 if (_allMeshes.Count == 0)
-                    TxtStatus.Text += " No .bundledmesh files in the folder.";
+                    TxtStatus.Text += " No .bundledmesh or .staticmesh files in the folder.";
             }
             catch (Exception ex)
             {
@@ -129,7 +130,7 @@ namespace BFP4FMeshViewer
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                _current = BundledMesh.Load(entry.FullPath);
+                _current = Bf2Mesh.Load(entry.FullPath);
 
                 CmbLod.SelectionChanged -= CmbLod_SelectionChanged;
                 CmbLod.Items.Clear();
@@ -185,8 +186,9 @@ namespace BFP4FMeshViewer
                 if (frameCamera) FrameBounds(built.Bounds);
 
                 var head = _current.Header;
-                TxtInfo.Text = string.Format("{0}  ·  v{1}  ·  {2} Tris  ·  {3} Materials",
-                    Path.GetFileName(_current.SourcePath), head.Version,
+                TxtInfo.Text = string.Format("{0}  ·  {1} v{2}  ·  {3} Tris  ·  {4} Materials",
+                    Path.GetFileName(_current.SourcePath),
+                    _current.Kind == MeshKind.Static ? "StaticMesh" : "BundledMesh", head.Version,
                     built.TriangleCount, _current.GeomMaterials[lod].Materials.Count);
 
                 var notes = built.Notes.Distinct().Take(4);

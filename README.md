@@ -1,6 +1,6 @@
 # BFP4F Mesh Viewer
 
-A small Windows tool for viewing Refractor 2 `.bundledmesh` files (Battlefield 2 /
+A small Windows tool for viewing Refractor 2 `.bundledmesh` and `.staticmesh` files (Battlefield 2 /
 Battlefield Play4Free) with their textures, and for exporting icon-sized PNGs
 that match the look of the original BFP4F attachment icons.
 
@@ -30,7 +30,7 @@ targeting pack is missing, install it through the Visual Studio Installer under
 
 ## Getting started
 
-1. Press **Load Folder…** and pick a folder containing `.bundledmesh` files.
+1. Press **Load Folder…** and pick a folder containing `.bundledmesh` or `.staticmesh` files.
    The folder is searched recursively, and every image file found anywhere inside
    it becomes available as a texture.
 2. Click an entry in the list. The mesh loads and is framed automatically.
@@ -147,18 +147,26 @@ Geometry    u32 geomCount
             u32 vertexFormat, u32 vertexStride, u32 vertexCount
             float  x (vertexCount * vertexStride / vertexFormat)
             u32 indexCount, u16 x indexCount
-u32         (BundledMesh specific)
+u32         (unknown)
 Lods        x sum of all lodCount
-            v6:  vec3 min, vec3 max, vec3 pivot, u32 nodeCount
+  bundled   v6:  vec3 min, vec3 max, vec3 pivot, u32 nodeCount
             v10: vec3 min, vec3 max, u32 nodeCount,
                  if header.u5 == 1: {4x4 float matrix, string} x nodeCount
+  static    vec3 min, vec3 max, (v4 only: vec3 pivot), u32 nodeCount,
+            4x4 float matrix x nodeCount
 Materials   x sum of all lodCount
             u32 materialCount
             { u32 alphaMode, string shader, string technique,
               u32 mapCount, string x mapCount,
               u32 vertexStart, u32 indexStart, u32 indexCount, u32 vertexCount,
-              u32 u1, u16 u2, u16 u3 }
+              u32 u1, u16 u2, u16 u3,
+              static v11 only: vec3 min, vec3 max }
 ```
+
+The mesh type is taken from the file extension. For static meshes the texture
+slot also picks the UV set (slot 0 base → UV1, 1 detail → UV2, 2 dirt → UV3,
+3 crack → UV4), matching the `BaseDetailDirtCrack` layout; bundled meshes always
+use UV1.
 
 `string` = `u32` length followed by ASCII, no null terminator.
 
@@ -179,7 +187,7 @@ are rendered, since winding is not consistent across BF2 meshes.
 
 | File | Contents |
 |---|---|
-| `Bf2/BundledMesh.cs` | file format parser |
+| `Bf2/Bf2Mesh.cs` | file format parser (bundled + static) |
 | `Bf2/DdsImage.cs` | DDS decoder: BC1/DXT1, BC2/DXT3, BC3/DXT5, uncompressed |
 | `Bf2/MeshBuilder.cs` | builds the `Model3DGroup`, resolves texture paths |
 | `Bf2/Snapshot.cs` | offscreen rendering at a fixed size, drop shadow, PNG export |
@@ -189,9 +197,9 @@ are rendered, since winding is not consistent across BF2 meshes.
 
 ## Limitations
 
-- `.bundledmesh` only. `.staticmesh` and `.skinnedmesh` use different LOD and
-  material blocks.
-- Mesh versions 6 and 10 only. Other versions stop with a clear message rather
+- `.bundledmesh` and `.staticmesh` only. `.skinnedmesh` uses different LOD
+  (rig) and material blocks.
+- Bundled mesh versions 6 and 10 only. Other versions stop with a clear message rather
   than silently reading garbage.
 - Loose files in a folder; `.zip` archives are not read.
 - Diffuse map only — no normal maps, no shaders.

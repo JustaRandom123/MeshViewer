@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 
 namespace BFP4FMeshViewer.Bf2
 {
-    /// <summary>Baut aus einem BundledMesh-LOD ein WPF-Model3DGroup.</summary>
+    /// <summary>Baut aus einem Bundled-/StaticMesh-LOD ein WPF-Model3DGroup.</summary>
     public static class MeshBuilder
     {
         public sealed class BuildResult
@@ -18,7 +18,7 @@ namespace BFP4FMeshViewer.Bf2
             public int TriangleCount;
         }
 
-        public static BuildResult Build(BundledMesh mesh, int flatLodIndex,
+        public static BuildResult Build(Bf2Mesh mesh, int flatLodIndex,
                                         TextureLibrary textures, int preferredTextureSlot,
                                         bool forceOpaque = false)
         {
@@ -32,11 +32,11 @@ namespace BFP4FMeshViewer.Bf2
 
             int posOff = geo.FloatOffsetOf(DeclUsage.Position);
             int nrmOff = geo.FloatOffsetOf(DeclUsage.Normal);
-            int uvOff = geo.FloatOffsetOf(DeclUsage.Uv1);
+            int uvOff1 = geo.FloatOffsetOf(DeclUsage.Uv1);
 
             if (posOff < 0)
                 throw new InvalidDataException("Mesh hat kein POSITION-Attribut.");
-            if (uvOff < 0)
+            if (uvOff1 < 0)
                 result.Notes.Add("Kein UV1-Attribut - Textur wird nicht abgebildet.");
 
             if (flatLodIndex < 0 || flatLodIndex >= mesh.GeomMaterials.Count)
@@ -51,6 +51,21 @@ namespace BFP4FMeshViewer.Bf2
             foreach (var mat in lodMaterials.Materials)
             {
                 if (mat.IndexCount == 0) continue;
+
+                // Textur zuerst aufloesen: bei StaticMeshes haengt der UV-Satz vom Slot ab
+                BitmapSource tex = null;
+                string usedPath = null;
+                int usedSlot = -1;
+                if (textures != null && mat.TextureMaps.Count > 0)
+                {
+                    // BF2 legt die Specular-Map in den Alphakanal der Diffuse-Textur.
+                    // WPF liest Alpha als Deckkraft - bei alphaMode 0 (opak) also verwerfen,
+                    // sonst waere das Modell fast unsichtbar.
+                    bool opaque = forceOpaque || mat.AlphaMode == 0;
+                    tex = textures.Resolve(mat.TextureMaps, preferredTextureSlot, opaque, out usedPath, out usedSlot);
+                }
+
+                int uvOff = UvOffsetFor(mesh, usedSlot, uvOff1);
 
                 var positions = new Point3DCollection((int)mat.IndexCount);
                 var normals = nrmOff >= 0 ? new Vector3DCollection((int)mat.IndexCount) : null;
@@ -109,17 +124,6 @@ namespace BFP4FMeshViewer.Bf2
                 if (normals != null) g.Normals = normals;
                 if (uvs != null) g.TextureCoordinates = uvs;
 
-                BitmapSource tex = null;
-                string usedPath = null;
-                if (textures != null && mat.TextureMaps.Count > 0)
-                {
-                    // BF2 legt die Specular-Map in den Alphakanal der Diffuse-Textur.
-                    // WPF liest Alpha als Deckkraft - bei alphaMode 0 (opak) also verwerfen,
-                    // sonst waere das Modell fast unsichtbar.
-                    bool opaque = forceOpaque || mat.AlphaMode == 0;
-                    tex = textures.Resolve(mat.TextureMaps, preferredTextureSlot, opaque, out usedPath);
-                }
-
                 Material wpfMat;
                 if (tex != null)
                 {
@@ -157,6 +161,22 @@ namespace BFP4FMeshViewer.Bf2
             result.Model = group;
             result.Bounds = new Rect3D(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
             return result;
+        }
+
+        private static readonly DeclUsage[] UvByIndex =
+            { DeclUsage.Uv1, DeclUsage.Uv2, DeclUsage.Uv3, DeclUsage.Uv4, DeclUsage.Uv5 };
+
+        /// <summary>
+        /// StaticMesh (BaseDetailDirtCrack): Textur-Slot n nutzt den UV-Satz n+1
+        /// (Base=UV1, Detail=UV2, Dirt=UV3, Crack=UV4). Ab Slot 4 folgen Normal-Maps,
+        /// dafuer und fuer BundledMeshes bleibt es bei UV1.
+        /// </summary>
+        private static int UvOffsetFor(Bf2Mesh mesh, int textureSlot, int uv1Offset)
+        {
+            if (mesh.Kind != MeshKind.Static || textureSlot <= 0 || textureSlot > 3)
+                return uv1Offset;
+            int off = mesh.Geometry.FloatOffsetOf(UvByIndex[textureSlot]);
+            return off >= 0 ? off : uv1Offset;
         }
     }
 
@@ -196,7 +216,15 @@ namespace BFP4FMeshViewer.Bf2
         public BitmapSource Resolve(IList<string> textureMaps, int preferredSlot,
                                     bool forceOpaque, out string usedPath)
         {
+            int usedSlot;
+            return Resolve(textureMaps, preferredSlot, forceOpaque, out usedPath, out usedSlot);
+        }
+
+        public BitmapSource Resolve(IList<string> textureMaps, int preferredSlot,
+                                    bool forceOpaque, out string usedPath, out int usedSlot)
+        {
             usedPath = null;
+            usedSlot = -1;
             int n = textureMaps.Count;
             for (int k = 0; k < n; k++)
             {
@@ -205,7 +233,7 @@ namespace BFP4FMeshViewer.Bf2
                 if (file == null) continue;
 
                 var bmp = LoadCached(file, forceOpaque);
-                if (bmp != null) { usedPath = file; return bmp; }
+                if (bmp != null) { usedPath = file; usedSlot = i; return bmp; }
             }
             return null;
         }

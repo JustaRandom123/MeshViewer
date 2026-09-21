@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BFP4FMeshViewer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+38689270d2d34392d1725bf68838112010be4ede")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1145d6bf8f9c683cfce8cf701cd5ca4672a471d4")]
 [assembly: System.Reflection.AssemblyProductAttribute("BFP4FMeshViewer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BFP4FMeshViewer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
